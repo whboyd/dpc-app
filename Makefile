@@ -148,8 +148,9 @@ CONF_FILE = "dpc-attribution/src/test/resources/test.application.yml"
 
 secure-envs: ## Decrypt API environment secrets
 secure-envs:
-	@bash ops/scripts/secrets --decrypt ops/config/encrypted/bb.keystore | tail -n +2 > bbcerts/bb.keystore
-	@bash ops/scripts/secrets --decrypt ops/config/encrypted/local.env | tail -n +2 > ops/config/decrypted/local.env
+#   Disabling as we don't have access to the CMS vault password to decrypt these
+#	@bash ops/scripts/secrets --decrypt ops/config/encrypted/bb.keystore | tail -n +2 > bbcerts/bb.keystore
+#	@bash ops/scripts/secrets --decrypt ops/config/encrypted/local.env | tail -n +2 > ops/config/decrypted/local.env
 
 seed-db: ## Seed attribution data for local database
 seed-db:
@@ -212,3 +213,8 @@ ci-api-client:
 .PHONY: unit-tests
 unit-tests:
 	@bash ./dpc-unit-test.sh
+
+.PHONY: build-local
+build-local: docker-base
+	@mvn clean compile -Perror-prone -B -V -ntp
+	@mvn package -Pci -ntp
